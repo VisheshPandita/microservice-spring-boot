@@ -1,7 +1,12 @@
 package com.microservice.CloudGateway;
 
+import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JCircuitBreaker;
+import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JCircuitBreakerFactory;
+import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JConfigBuilder;
+import org.springframework.cloud.client.circuitbreaker.Customizer;
 
 @SpringBootApplication
 public class CloudGatewayApplication {
@@ -10,4 +15,12 @@ public class CloudGatewayApplication {
 		SpringApplication.run(CloudGatewayApplication.class, args);
 	}
 
+	public Customizer<Resilience4JCircuitBreakerFactory> defaultCustomizer() {
+		return factory -> factory.configureDefault(
+				id -> new Resilience4JConfigBuilder(id)
+						.circuitBreakerConfig(
+								CircuitBreakerConfig.ofDefaults()
+						).build()
+		);
+	}
 }
